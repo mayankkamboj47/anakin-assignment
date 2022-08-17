@@ -1,0 +1,9 @@
+A GET request to https://api.github.com/users/mayankkamboj47 will fetch all the details except
+  the list of repositories along with their url
+
+That can be obtained by making a GET request to https://api.github.com/users/mayankkamboj47/repos
+
+Server side pagination. What should the urls look like ? 
+
+/:user/:page
+
