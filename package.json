@@ -1,9 +1,13 @@
 {
   "private": true,
+  "engines":{
+    "node":"16.16.x"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "start_server":"node repo_server/server.js"
   },
   "dependencies": {
     "axios": "^0.27.2",
