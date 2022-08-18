@@ -173,8 +173,8 @@ function GithubProfile({username}){
   // Get the profile directly from Github API to save load time,
   const [page, setPage] = useState(0);
   const [userData, userDataLoading, userDataError] = useRemote(`https://api.github.com/users/${username}`);
-  const [repos, reposLoading, repoError] = useRemote(`http://localhost:3001?username=${username}&page=${page}`);
-  const [total, totalLoading, totalError] = useRemote(`http://localhost:3001/size/${username}`);
+  const [repos, reposLoading, repoError] = useRemote(`https://nodeserverfyle.herokuapp.com?username=${username}&page=${page}`);
+  const [total, totalLoading, totalError] = useRemote(`https://nodeserverfyle.herokuapp.com/size/${username}`);
 
   useEffect(() => setPage(0), [username]) // restart from page 0 on username change
 
