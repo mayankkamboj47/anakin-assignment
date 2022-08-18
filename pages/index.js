@@ -218,7 +218,7 @@ function User({data, loading, error}){
   )
 }
 function Repos({repos, loading, error}){
-  if(loading || error) return <Loader height="500px" text="Repositories are loading" error={error}/>;
+  if(loading || error) return <Loader height="1000px" text="Repositories are loading" error={error}/>;
   
   return (<>
     {repos.map(
