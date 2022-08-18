@@ -22,7 +22,6 @@ export default function Home() {
           Made by &nbsp; <strong>Mayank Kamboj</strong>
         </a>
       </footer>
-
       <style jsx>{`
         .container {
           min-height: 100vh;
@@ -203,7 +202,7 @@ function User({data, loading, error}){
         } = data;
   return (
     <div className='user'>
-      <img src={avatar_url} />
+      <img src={avatar_url} alt={`${name}'s profile picture`} />
       <div>
       <h2>{name}</h2>
       {bio && <p>{bio}</p>}
