@@ -3,16 +3,16 @@ import { useEffect, useState } from 'react'
 import useRemote from '../hooks/useRemote';
 
 export default function Home() {
-  const [username, setUsername] = useState('mozilla');
+  const [profileRepo, setProfileRepo] = useState('11ty/eleventy');
   return (
     <div className="container">
       <Head>
-        <title>Github API : Fyle Assignment</title>
+        <title>Github Issue Navigator</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <h1 className='title'>Github User Search</h1>
-      <UsernameForm onSubmit={setUsername} />
-      <GithubProfile username={username} />
+      <h1 className='title'>Github Issue Navigator</h1>
+      <ProfileRepoSetter onSubmit={setProfileRepo} />
+      <IssueList profileRepo={profileRepo} />
       <footer>
         <a
           href="https://mayankkamboj47.github.io"
@@ -151,78 +151,44 @@ export default function Home() {
   )
 }
 
-function UsernameForm({onSubmit}){
-  const [username, setUsername] = useState('');
-  const onChange = (e)=> setUsername(e.target.value);
+function ProfileRepoSetter({onSubmit}){
+  const [profileRepo, setProfileRepo] = useState('');
+  const onChange = (e)=> setProfileRepo(e.target.value);
   return (
   <form onSubmit={(e)=>{
     e.preventDefault();
-    if(onSubmit) onSubmit(username);
+    if(onSubmit) onSubmit(profileRepo);
   }} className='usernameform'>
   <label>
-    Enter a username &nbsp;
-    <input type='text' placeholder='John Doe' value={username} onChange={onChange}/>
+    Enter a repo in the format 'username/repo' &nbsp;
+    <input type='text' placeholder='11ty/eleventy' value={profileRepo} onChange={onChange}/>
   </label>
   <input type='submit' value='Go' />
   </form>
 );
 }
 
-function GithubProfile({username}){
+function IssueList({profileRepo}){
   // Get the profile directly from Github API to save load time,
   const [page, setPage] = useState(0);
-  const [userData, userDataLoading, userDataError] = useRemote(`https://api.github.com/users/${username}`);
-  const [repos, reposLoading, repoError] = useRemote(`https://nodeserverfyle.herokuapp.com?username=${username}&page=${page}`);
-  const [total, totalLoading, totalError] = useRemote(`https://nodeserverfyle.herokuapp.com/size/${username}`);
+  const [issues, issueDataLoading, issueDataError] = useRemote(`https://api.github.com/repos/${profileRepo}/issues`);
 
-  useEffect(() => setPage(0), [username]) // restart from page 0 on username change
+  useEffect(() => setPage(0), [profileRepo]) // restart from page 0 on username change
 
   return (
     <div className='profile'>
-      <User data={userData} loading={userDataLoading} error={userDataError} />
-      <Repos repos={repos} loading={reposLoading} error={repoError} />
-      <BreadCrumbs page={page} setPage={setPage} total={total} loading={totalLoading} error={totalError} />
+      <Issues issues={issues?.slice(10*page, 10*(page+1))} loading={issueDataLoading} error={issueDataError} />
+      <BreadCrumbs page={page} setPage={setPage} total={issues?.length} loading={issueDataLoading} error={issueDataError} />
     </div>
-  )
+  );
 }
 
-function User({data, loading, error}){
-  // incase error is true, pass ' ' as error message, so that we can stop showing
-  // "loading..." without replacing it with another error string
-  // (this error string will show in Repos - one place for it is enough)
-  if(loading || error) return <Loader text="Profile is loading" height="50px" error={error && ' '} />
-  const {avatar_url,  // to use as image's src
-        html_url,     // the url to the repo
-        name,         // full name
-        location,     // geographical location
-        email,        
-        bio,
-        twitter_username,
-        blog          // url to the blog
-        } = data;
-  return (
-    <div className='user'>
-      <img src={avatar_url} alt={`${name}'s profile picture`} />
-      <div>
-      <h2>{name}</h2>
-      {bio && <p>{bio}</p>}
-      <address>
-        {location && <span className='location'>{location}</span>}
-        {blog && <span>Blog : <a href={blog}>{blog}</a></span>}
-        {twitter_username && <span>Twitter : <a href={`https://www.twitter.com/${twitter_username}`}>{`https://www.twitter.com/${twitter_username}`}</a></span>}
-        {email && <span className='email'>{email}</span>}
-        <span>Github: <a href={html_url}>{html_url}</a></span>
-      </address>
-      </div>
-    </div>
-  )
-}
-function Repos({repos, loading, error}){
-  if(loading || error) return <Loader height="1000px" text="Repositories are loading" error={error}/>;
-  
+function Issues({issues, loading, error}){
+  if(loading || error) return <Loader height="1000px" text="Issues are loading" error={error}/>;
+  console.log("Issues", issues);
   return (<>
-    {repos.map(
-      (r) => <Repo key={r.url} name={r.name} url={r.url} description={r.description} topics={r.topics} />
+    {issues.map(
+      (r) => <Issue key={r.url} title={r.title} url={r.url} number={r.number} topics={r.labels} />
       )
     }
   </>);
@@ -244,12 +210,13 @@ function BreadCrumbs({page, setPage, total=0, loading, error}){
   );
 }
 
-function Repo({name, url, description, topics}){
+function Issue({title, url, number, topics}){
+  console.log(title, url, number, topics);
   return (
     <div className='repo'>
-        <a href={url}><h1>{name}</h1></a>
-        <p>{description}</p>
-        {topics.map(topic=><span className='tag' key={topic}>{topic}</span>)}
+        <a href={url}><h1>{title}</h1></a>
+        <p>{number}</p> {/** A <p> ? You can remove this, and add something clearer */}
+        {topics.map(topic=><span className='tag' key={topic.name}>{topic.name}</span>)}
       </div>
   )
 }
