@@ -6,8 +6,6 @@ The server is hosted on heroku, at https://nodeserverfyle.herokuapp.com . The re
 
 # Assumptions when making this project
 
-I noticed that the github API doesn't pass in more than 100 repositories incase a user has more than
-100. I've assumed that this is alright.  
-
-I've also assumed that the rate of 60 requests an hour is enough for this assignment, and I don't
-need the bumped rate of 5000 requests/hour that I can only get after authentication. 
+1. Make the core thing first
+2. Make it so that design and extra details can be modified quickly
+3. Don't work on design and extra details prior. It saves time to do it upon feedback. 
